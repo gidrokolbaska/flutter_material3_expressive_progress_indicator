@@ -203,9 +203,10 @@ class _ExpressiveProgressIndicatorPainter extends CustomPainter {
 
     final Rect trackRect;
     if (value != null && effectiveTrackGap > 0) {
+      final initialSpacing = value! > 0 ? effectiveTrackGap : 0;
       trackRect = switch (textDirection) {
         TextDirection.ltr => Rect.fromLTRB(
-          clampDouble(value!, 0.0, 1.0) * size.width + effectiveTrackGap,
+          clampDouble(value!, 0.0, 1.0) * size.width + initialSpacing,
           0,
           size.width,
           size.height,
@@ -213,9 +214,7 @@ class _ExpressiveProgressIndicatorPainter extends CustomPainter {
         TextDirection.rtl => Rect.fromLTRB(
           0,
           0,
-          size.width -
-              clampDouble(value!, 0.0, 1.0) * size.width -
-              effectiveTrackGap,
+          size.width - clampDouble(value!, 0.0, 1.0) * size.width,
           size.height,
         ),
       };
@@ -259,10 +258,6 @@ class _ExpressiveProgressIndicatorPainter extends CustomPainter {
       if (width <= 0.0) {
         return;
       }
-      double smoothStep(double edge0, double edge1, double x) {
-        final t = ((x - edge0) / (edge1 - edge0)).clamp(0.0, 1.0);
-        return t * t * (3 - 2 * t);
-      }
 
       final double left = switch (textDirection) {
         TextDirection.rtl => size.width - width - x,
@@ -282,6 +277,11 @@ class _ExpressiveProgressIndicatorPainter extends CustomPainter {
 
       final path = Path();
       if (progressIndicatorType == ProgressIndicatorType.m3Expressive) {
+        double smoothStep(double edge0, double edge1, double x) {
+          final t = ((x - edge0) / (edge1 - edge0)).clamp(0.0, 1.0);
+          return t * t * (3 - 2 * t);
+        }
+
         const double fadeWidth = 0.05;
         final double fadeIn = smoothStep(0.05, 0.05 + fadeWidth, progress);
         final double fadeOut =

@@ -15,11 +15,10 @@ class _IndicatorExampleScreenState extends State<IndicatorExampleScreen>
   @override
   void initState() {
     super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 4))
-          ..addListener(() {
-            setState(() {});
-          });
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
   }
 
   @override
@@ -36,12 +35,23 @@ class _IndicatorExampleScreenState extends State<IndicatorExampleScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         spacing: 16.0,
         children: [
-          ExpressiveProgressIndicator(
-            value: _controller.value,
-            minHeight: 10,
-            progressIndicatorType: ProgressIndicatorType.m3Expressive,
-            amplitude: 5,
-            frequency: 10,
+          ValueListenableBuilder(
+            valueListenable: _controller,
+            builder: (context, value, child) {
+              return Column(
+                spacing: 10,
+                children: [
+                  LinearProgressIndicator(value: value, minHeight: 10),
+                  ExpressiveProgressIndicator(
+                    value: value,
+                    minHeight: 10,
+                    progressIndicatorType: ProgressIndicatorType.m3Expressive,
+                    amplitude: 5,
+                    frequency: 10,
+                  ),
+                ],
+              );
+            },
           ),
           Row(
             mainAxisSize: MainAxisSize.max,
@@ -49,7 +59,7 @@ class _IndicatorExampleScreenState extends State<IndicatorExampleScreen>
             children: [
               FilledButton(
                 onPressed: () {
-                  _controller.animateTo(1.0);
+                  _controller.animateTo(1);
                 },
                 child: Text('+'),
               ),
